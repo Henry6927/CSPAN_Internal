@@ -1,0 +1,50 @@
+.csv-download-menu,
+.settings-menu {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.csv-download-menu h2,
+.settings-menu h2 {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.greyButton,
+.redButton,
+.settings-menu button {
+    display: inline-block;
+    width: 200px;
+    margin: 10px 5px;
+    padding: 10px 15px;
+    font-size: 1em;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.greyButton {
+    background-color: #2c3e50;
+}
+
+.greyButton:hover {
+    background-color: #1a242f;
+}
+
+.redButton {
+    background-color: darkred;
+}
+
+.redButton:hover,
+.settings-menu button:hover {
+    background-color: #ff1a1a;
+}
+
+.settings-menu p {
+    margin-bottom: 20px;
+}

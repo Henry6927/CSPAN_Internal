@@ -1,0 +1,137 @@
+.full-page-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mod-summary {
+  max-height: 80vh; 
+  overflow-y: auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  width: 80%;
+}
+
+.layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.left-section {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-section {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.edit-prompt-input-box {
+  position: relative;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+}
+
+.edit-prompt-input-box .MuiInputBase-root {
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+}
+
+.edit-prompt-input-box .MuiInputBase-root:focus-within {
+  max-height: 300px;
+  width: 150%; 
+  transform: translateX(-25%); 
+}
+
+.keyword-input-box,
+.edit-prompt-input-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.keyword-input-box .MuiButton-root,
+.edit-prompt-input-box .MuiButton-root {
+  margin-top: 10px;
+  width: auto;
+  align-self: center; 
+}
+
+.edit-prompt-input-box .MuiFormLabel-root {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.edit-prompt-input-box .MuiInputBase-root:focus-within ~ .MuiFormLabel-root {
+  opacity: 0;
+}
+
+
+
+
+
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.new-text {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2c3e50; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.button:hover {
+  background-color: #1a242f; 
+}
+
+.save-cancel-button {
+  width: 48%;
+  padding: 10px;
+  background-color: #2c3e50; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.save-cancel-button:hover {
+  background-color: #1a242f; 
+}
+
+.save-cancel-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
