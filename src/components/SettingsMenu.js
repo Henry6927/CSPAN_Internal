@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SettingsMenu.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const SettingsMenu = ({ termId }) => {
   const navigate = useNavigate();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -13,7 +15,7 @@ const SettingsMenu = ({ termId }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`, {
         method: 'DELETE',
       });
 
@@ -29,7 +31,7 @@ const SettingsMenu = ({ termId }) => {
 
   const handleDeleteAll = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms/delete_all', {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/delete_all`, {
         method: 'DELETE',
       });
 
@@ -37,7 +39,7 @@ const SettingsMenu = ({ termId }) => {
         throw new Error('Network response was not ok');
       }
 
-      navigate('/pageview');  
+      navigate('/');  
     } catch (error) {
       console.error('Error:', error);
     }
@@ -45,7 +47,7 @@ const SettingsMenu = ({ termId }) => {
 
   const handleSyncKeywords = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms/sync_keywords', {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/sync_keywords`, {
         method: 'POST',
       });
 
@@ -61,7 +63,7 @@ const SettingsMenu = ({ termId }) => {
 
   const handleClearKeywords = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms/clear_keywords', {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/clear_keywords`, {
         method: 'DELETE',
       });
 
@@ -77,7 +79,7 @@ const SettingsMenu = ({ termId }) => {
 
   const handleDeleteAbove = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/delete_terms_above/${deleteAboveValue}`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/delete_terms_above/${deleteAboveValue}`, {
         method: 'DELETE',
       });
 
@@ -85,7 +87,7 @@ const SettingsMenu = ({ termId }) => {
         throw new Error('Network response was not ok');
       }
 
-      navigate('/pageview');
+      navigate('/');
     } catch (error) {
       console.error('Error:', error);
     }

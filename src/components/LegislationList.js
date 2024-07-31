@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './LegislationList.css'; // Ensure the custom CSS is imported
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 function LegislationList() {
   const [legislation, setLegislation] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ function LegislationList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/legislation/bills')
+    fetch(`${BACKEND_API_URL}/api/legislation/bills`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

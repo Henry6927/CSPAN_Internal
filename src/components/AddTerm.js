@@ -4,6 +4,7 @@ import './AddTerm.css';
 import Papa from 'papaparse';
 import { Box, TextField, InputAdornment, Select, MenuItem } from '@mui/material';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
 
 function AddTerm() {
   const [name, setName] = useState('');
@@ -27,7 +28,7 @@ function AddTerm() {
 
   const fetchKeywordOptions = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms');
+      const response = await fetch(`${BACKEND_API_URL}/api/terms`);
       const data = await response.json();
       const terms = data.map(term => term.name);
       setKeywordOptions(terms);
@@ -42,7 +43,7 @@ function AddTerm() {
     setError(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms/new', {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/new`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ function AddTerm() {
           const termTypeValue = type || 'other';
   
           try {
-            const response = await fetch('http://127.0.0.1:5000/api/terms/new', {
+            const response = await fetch(`${BACKEND_API_URL}/api/terms/new`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

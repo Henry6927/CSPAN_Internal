@@ -57,6 +57,7 @@ class LegislativeBill(db.Model):
     congress_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=True) 
     link = db.Column(db.Text, nullable=True)
+    charcount = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
         return f'<LegislativeBill {self.legislative_id}>'

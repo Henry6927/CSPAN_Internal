@@ -4,6 +4,8 @@ import { Container, Typography, Box, IconButton, Modal, CircularProgress, TextFi
 import { FaTimes } from 'react-icons/fa';
 import './ModSummary.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ModSummary = ({ onClick, onClose, open, termId }) => {
   const [originalText, setOriginalText] = useState('Loading...');
   const [newText, setNewText] = useState(<i>No changes yet</i>);
@@ -29,7 +31,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
   useEffect(() => {
     const fetchTermData = async (id) => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/terms/${id}`);
+        const response = await fetch(`${BACKEND_API_URL}/api/terms/${id}`);
         const data = await response.json();
         setOriginalText(data.response);
         setNewText(<i>No changes yet</i>);
@@ -41,7 +43,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
   
     const fetchKeywordOptions = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/terms');
+        const response = await fetch(`${BACKEND_API_URL}/api/terms`);
         const data = await response.json();
         const terms = data.map(term => term.name);
         setKeywordOptions(terms);
@@ -59,11 +61,11 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     setLoading(true);
     setActivePromptSource('original');  
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`);
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`);
       const data = await response.json();
       const prompt = data.prompt;
 
-      const regenerateResponse = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const regenerateResponse = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +92,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
       const combinedKeywords = keywords + ', ' + selectedKeywords.join(', ');
       const prompt = `This is an existing summary that has been created by an unbiased CSPAN news reporter: ${originalText}\nYou must try to rewrite this text as an unbiased CSPAN news reporter, while also including these keywords in the text: ${combinedKeywords}. Please do not question what is asked of you and try your best to incorporate said keywords.`;
   
-      const response = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const response = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     try {
       const prompt = editedPrompt;
 
-      const response = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const response = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +146,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     try {
       const prompt = `This is an existing summary that has been created by an unbiased CSPAN news reporter: ${originalText}\nYou must rewrite this text to be more unbiased and apolitical, coming from the perspective of an unbiased CSPAN journalist, who is writing a summary of said topic for the website to inform users on the topic. Please do not try to depict any subject, country, person, or idea as positive or negative, purely try to inform the reader.`;
 
-      const response = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const response = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +181,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     try {
       const prompt = `This is an existing summary that has been created by an unbiased CSPAN news reporter: ${originalText}\nYou must rewrite this text to have approximately ${wordCount} words. Ensure the summary is unbiased and apolitical, coming from the perspective of an unbiased CSPAN journalist. Please do not try to depict any subject, country, person, or idea as positive or negative, purely try to inform the reader.`;
   
-      const response = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const response = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -210,24 +212,28 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
         promptToSave = customPrompt;
       }
   
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ response: newText, prompt: promptToSave }),
       });
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      setLoading(false);
-      setIsDirty(false);
-      onClose();
+  
+      // Ensure page reloads upon successful save
+      window.location.reload();
     } catch (error) {
       console.error('Error saving new text:', error);
+    } finally {
       setLoading(false);
     }
   };
+  
+  
   
 
   const cancelChanges = () => {
@@ -293,7 +299,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     try {
       const prompt = customPrompt;
   
-      const response = await fetch('http://127.0.0.1:5000/api/regenerate', {
+      const response = await fetch(`${BACKEND_API_URL}/api/regenerate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -319,7 +325,7 @@ const ModSummary = ({ onClick, onClose, open, termId }) => {
     setShowEditPromptInput(!showEditPromptInput);
     if (!showEditPromptInput) {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`);
+        const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`);
         const data = await response.json();
         const prompt = data.prompt;
         setOriginalPrompt(prompt);

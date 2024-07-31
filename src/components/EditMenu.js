@@ -4,6 +4,8 @@ import { Container, Typography, Box, IconButton, Modal } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
 import './EditMenu.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const TextPopup = ({ open, text, onClose }) => (
   <Modal open={open} onClose={onClose}>
     <Box className="text-popup">
@@ -33,7 +35,7 @@ const EditMenu = ({ termId, open, onClose }) => {
 
   useEffect(() => {
     if (open) {
-      fetch(`http://127.0.0.1:5000/api/terms/${termId}`)
+      fetch(`${BACKEND_API_URL}/api/terms/${termId}`)
         .then((response) => response.json())
         .then((term) => {
           if (term) {

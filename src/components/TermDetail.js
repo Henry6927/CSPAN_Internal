@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import AuditPanelWithEdit from './AuditPanel';
 import ManualEditMenu from './ManualEditMenu';
 import './TermDetail.css';
 
 const GOOGLE_CSE_API_KEY = process.env.REACT_APP_GOOGLE_CSE_API_KEY;
 const GOOGLE_CSE_CX = process.env.REACT_APP_GOOGLE_CSE_CX;
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
 
+const sections = ['Summary', 'FAQ', 'Technical_Stuff']; // Define the sections variable
 
 function TermDetail() {
   const { termId } = useParams();
@@ -19,10 +21,10 @@ function TermDetail() {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/terms')
+    fetch(`${BACKEND_API_URL}/api/terms`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Network response was not ok: ${response.statusText}`);
         }
         return response.json();
       })
@@ -34,7 +36,12 @@ function TermDetail() {
 
         if (foundTerm) {
           fetch(`https://www.googleapis.com/customsearch/v1?q=${foundTerm.name}&cx=${GOOGLE_CSE_CX}&key=${GOOGLE_CSE_API_KEY}&searchType=image&num=1`)
-            .then(response => response.json())
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Google CSE response was not ok: ${response.statusText}`);
+              }
+              return response.json();
+            })
             .then(imageData => {
               if (imageData.items && imageData.items.length > 0) {
                 setImageUrl(imageData.items[0].link);
@@ -46,6 +53,7 @@ function TermDetail() {
         }
       })
       .catch(error => {
+        console.error('Error fetching terms:', error);
         setError(error);
         setLoading(false);
       });
@@ -91,8 +99,6 @@ function TermDetail() {
     return <p>No term found</p>;
   }
 
-  const sections = ['Summary', 'FAQ', 'Technical_Stuff'];
-
   return (
     <div className="container">
       <div className="navigation-buttons">
@@ -108,26 +114,36 @@ function TermDetail() {
         </div>
         <div className="faq-section">
           <h3>Frequently Asked Questions</h3>
-          <div className="faq-item">
-            <p className="faq-question">{term.faqQ1}</p>
-            <p className="faq-answer">{term.faqA1}</p>
-          </div>
-          <div className="faq-item">
-            <p className="faq-question">{term.faqQ2}</p>
-            <p className="faq-answer">{term.faqA2}</p>
-          </div>
-          <div className="faq-item">
-            <p className="faq-question">{term.faqQ3}</p>
-            <p className="faq-answer">{term.faqA3}</p>
-          </div>
-          <div className="faq-item">
-            <p className="faq-question">{term.faqQ4}</p>
-            <p className="faq-answer">{term.faqA4}</p>
-          </div>
-          <div className="faq-item">
-            <p className="faq-question">{term.faqQ5}</p>
-            <p className="faq-answer">{term.faqA5}</p>
-          </div>
+          {term.faqQ1 && (
+            <div className="faq-item">
+              <p className="faq-question">{term.faqQ1}</p>
+              <p className="faq-answer">{term.faqA1}</p>
+            </div>
+          )}
+          {term.faqQ2 && (
+            <div className="faq-item">
+              <p className="faq-question">{term.faqQ2}</p>
+              <p className="faq-answer">{term.faqA2}</p>
+            </div>
+          )}
+          {term.faqQ3 && (
+            <div className="faq-item">
+              <p className="faq-question">{term.faqQ3}</p>
+              <p className="faq-answer">{term.faqA3}</p>
+            </div>
+          )}
+          {term.faqQ4 && (
+            <div className="faq-item">
+              <p className="faq-question">{term.faqQ4}</p>
+              <p className="faq-answer">{term.faqA4}</p>
+            </div>
+          )}
+          {term.faqQ5 && (
+            <div className="faq-item">
+              <p className="faq-question">{term.faqQ5}</p>
+              <p className="faq-answer">{term.faqA5}</p>
+            </div>
+          )}
         </div>
       </div>
       <div className="faq-section">

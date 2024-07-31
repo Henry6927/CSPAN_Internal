@@ -4,6 +4,8 @@ import { Container, Typography, Box, IconButton, Modal } from '@mui/material';
 import { FaTimes } from 'react-icons/fa';
 import './ModEntireText.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ModEntireText = ({ open, onClose }) => (
   <Modal open={open} onClose={onClose} className="full-page-modal">
     <Container className="mod-entire-text">

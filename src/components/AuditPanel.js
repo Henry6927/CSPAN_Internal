@@ -9,6 +9,8 @@ import SettingsMenu from './SettingsMenu';
 import ModSummary from './ModSummary';
 import ModFAQ from './ModFAQ';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const AuditPanelWithEdit = ({ sections, termId }) => {
   const [auditData, setAuditData] = useState(sections.reduce((acc, section) => ({
     ...acc,
@@ -27,7 +29,7 @@ const AuditPanelWithEdit = ({ sections, termId }) => {
   useEffect(() => {
     const fetchAuditData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/audit/${termId}`);
+        const response = await fetch(`${BACKEND_API_URL}/api/audit/${termId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -57,7 +59,7 @@ const AuditPanelWithEdit = ({ sections, termId }) => {
 
     const fetchTermSummary = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`);
+        const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -91,8 +93,8 @@ const AuditPanelWithEdit = ({ sections, termId }) => {
     };
 
     const url = auditId
-      ? `http://127.0.0.1:5000/api/audit/${auditId}`
-      : 'http://127.0.0.1:5000/api/audit';
+      ? `${BACKEND_API_URL}/api/audit/${auditId}`
+      : `${BACKEND_API_URL}/api/audit`;
 
     const method = auditId ? 'PUT' : 'POST';
 

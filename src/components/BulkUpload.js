@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const BulkUpload = () => {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
@@ -20,7 +22,7 @@ const BulkUpload = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/bulk_upload', formData, {
+      const response = await axios.post(`${BACKEND_API_URL}/api/bulk_upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

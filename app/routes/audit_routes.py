@@ -5,7 +5,10 @@ bp = Blueprint('audits', __name__)
 
 @bp.route('/<int:id>', methods=['PUT'])
 def update_audit(id):
-    audit = Audit.query.get_or_404(id)
+    audit = Audit.query.get(id)
+    if not audit:
+        # If the audit does not exist, create it with the provided data
+        return create_audit_with_id(id)
     data = request.json
     audit.FAQ = data['auditData'].get('FAQ', audit.FAQ)
     audit.Summary = data['auditData'].get('Summary', audit.Summary)
@@ -19,7 +22,6 @@ def update_audit(id):
         "Technical_Stuff": audit.Technical_Stuff,
         "notes": audit.notes
     }})
-
 
 @bp.route('/<int:id>', methods=['GET'])
 def get_audit(id):
@@ -37,13 +39,18 @@ def get_audit(id):
 @bp.route('/', methods=['POST'])
 def create_audit():
     data = request.json
-    term = Term.query.get(data['id'])
+    return create_audit_with_id(data['id'], data)
+
+def create_audit_with_id(id, data=None):
+    term = Term.query.get(id)
     if term:
+        if not data:
+            data = request.json
         audit = Audit(
             id=term.id,
-            FAQ=data.get('FAQ', False),
-            Summary=data.get('Summary', False),
-            Technical_Stuff=data.get('Technical_Stuff', False),
+            FAQ=data['auditData'].get('FAQ', False),
+            Summary=data['auditData'].get('Summary', False),
+            Technical_Stuff=data['auditData'].get('Technical_Stuff', False),
             notes=data.get('notes', '')
         )
         db.session.add(audit)
@@ -55,4 +62,4 @@ def create_audit():
             "Technical_Stuff": audit.Technical_Stuff,
             "notes": audit.notes
         }}), 201
-    return jsonify({"message": "Term not found"})
+    return jsonify({"message": "Term not found"}), 404

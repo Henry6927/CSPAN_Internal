@@ -22,7 +22,7 @@ function App() {
           <Route path="/term/:termId" element={<TermDetail />} />
           <Route path="/term/:termId/modify-summary" element={<ModSummary />} />
           <Route path="/subtitleview" element={<subtitleview />} />
-          <Route path="/legislation" element={<LegislationList />} /> {/* Route for viewing all legislation */}
+          <Route path="/LegislationList" element={<LegislationList />} /> {/* Route for viewing all legislation */}
           <Route path="/legislation/new" element={<AddLegislation />} /> {/* Route for adding new legislation */}
           <Route path="/legislation/:congress_id/:legislative_id" element={<EditLegislation />} /> {/* Route for editing legislation */}
         </Routes>

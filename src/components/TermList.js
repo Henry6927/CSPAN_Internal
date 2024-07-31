@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './TermList.css'; // Ensure the custom CSS is imported
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 function TermList() {
   const [terms, setTerms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,10 +14,11 @@ function TermList() {
     faq: 'None',
     technical: 'None',
   });
+  const [fetching, setFetching] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/terms')
+    fetch(`${BACKEND_API_URL}/api/terms`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -64,6 +67,25 @@ function TermList() {
 
   const handleTermClick = (termId) => {
     navigate(`/term/${termId}`);
+  };
+
+  const handleFetchFromAirtable = () => {
+    setFetching(true);
+    fetch(`${BACKEND_API_URL}/api/terms/fetch_from_airtable`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setTerms(data);
+        setFetching(false);
+      })
+      .catch(error => {
+        setError(error);
+        setFetching(false);
+      });
   };
 
   if (loading) {
@@ -115,15 +137,24 @@ function TermList() {
           Add New Term
         </div>
       </Link>
-      {filteredTerms.map(term => (
-        <div
-          key={term.id}
-          className="term-card"
-          onClick={() => handleTermClick(term.id)}
-        >
-          <h3 className="term-title">{term.name}</h3>
+      {filteredTerms.length > 0 ? (
+        filteredTerms.map(term => (
+          <div
+            key={term.id}
+            className="term-card"
+            onClick={() => handleTermClick(term.id)}
+          >
+            <h3 className="term-title">{term.name}</h3>
+          </div>
+        ))
+      ) : (
+        <div className="no-terms">
+          <p>No terms available.</p>
+          <button onClick={handleFetchFromAirtable} disabled={fetching}>
+            {fetching ? 'Fetching...' : 'Fetch Data from Airtable'}
+          </button>
         </div>
-      ))}
+      )}
     </div>
   );
 }

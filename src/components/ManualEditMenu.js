@@ -3,6 +3,8 @@ import { TextField, Button, Container, Typography, Box, Modal, IconButton } from
 import { FaTimes } from 'react-icons/fa';
 import './ManualEditMenu.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ManualEditMenu = ({ termId, open, onClose, onSave }) => {
   const [termData, setTermData] = useState({
     description: '',
@@ -20,7 +22,7 @@ const ManualEditMenu = ({ termId, open, onClose, onSave }) => {
 
   useEffect(() => {
     if (open) {
-      fetch(`http://127.0.0.1:5000/api/terms/${termId}`)
+      fetch(`${BACKEND_API_URL}/api/terms/${termId}`)
         .then((response) => response.json())
         .then((term) => {
           if (term) {
@@ -49,7 +51,7 @@ const ManualEditMenu = ({ termId, open, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    fetch(`http://127.0.0.1:5000/api/terms/${termId}`, {
+    fetch(`${BACKEND_API_URL}/api/terms/${termId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

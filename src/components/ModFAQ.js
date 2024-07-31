@@ -4,18 +4,18 @@ import { Container, Typography, Box, IconButton, Modal, CircularProgress, TextFi
 import { FaTimes } from 'react-icons/fa';
 import './ModFAQ.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ModFaq = ({ onClose, open, termId }) => {
   const [faqData, setFaqData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [customQuestion, setCustomQuestion] = useState('');
   const [showCustomInput, setShowCustomInput] = useState(false);
-  const [newFaq, setNewFaq] = useState(null);
+  const [newFaq, setNewFaq] = useState([]);
   const [showNewFaqModal, setShowNewFaqModal] = useState(false);
   const [generatingNewFaq, setGeneratingNewFaq] = useState(false);
   const [selectedFaqIndex, setSelectedFaqIndex] = useState(null);
   const [customFaqIndex, setCustomFaqIndex] = useState(null);
-  
-
 
   useEffect(() => {
     fetchFaqData(termId);
@@ -23,7 +23,7 @@ const ModFaq = ({ onClose, open, termId }) => {
 
   const fetchFaqData = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/${id}`);
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -53,7 +53,7 @@ const ModFaq = ({ onClose, open, termId }) => {
         updatedFaqData[`faqA${selectedFaqIndex + 1}`] = newAnswer;
       }
 
-      const response = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -63,10 +63,10 @@ const ModFaq = ({ onClose, open, termId }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      await fetchFaqData(termId); 
+      await fetchFaqData(termId);
       setLoading(false);
       setShowNewFaqModal(false);
-      reloadFaqData(); 
+      reloadFaqData(); // Ensure this is correctly called
     } catch (error) {
       console.error('Error saving FAQ data:', error);
       setLoading(false);
@@ -76,7 +76,7 @@ const ModFaq = ({ onClose, open, termId }) => {
   const handleCustomSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/terms/process_custom_question', {
+      const response = await fetch(`${BACKEND_API_URL}/api/terms/process_custom_question`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,14 +88,14 @@ const ModFaq = ({ onClose, open, termId }) => {
       }
       const data = await response.json();
       const customAnswer = data.response;
-  
+
       const updatedFaqData = { ...faqData };
       if (customFaqIndex !== null) {
         updatedFaqData[`faqQ${customFaqIndex + 1}`] = customQuestion;
         updatedFaqData[`faqA${customFaqIndex + 1}`] = customAnswer;
       }
-  
-      const saveResponse = await fetch(`http://127.0.0.1:5000/api/terms/${termId}`, {
+
+      const saveResponse = await fetch(`${BACKEND_API_URL}/api/terms/${termId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -113,15 +113,12 @@ const ModFaq = ({ onClose, open, termId }) => {
       setLoading(false);
     }
   };
-  
-  
-  
 
   const handleCloseNewFaqModal = () => {
     setShowNewFaqModal(false);
     setSelectedFaqIndex(null);
     setNewFaq(null);
-    reloadFaqData(); 
+    reloadFaqData();
   };
 
   const generateNewFaq = async (index) => {
@@ -142,7 +139,7 @@ const ModFaq = ({ onClose, open, termId }) => {
         description: faqData.description,
       };
 
-      const response = await fetch(`http://127.0.0.1:5000/api/generate-new-faq`, {
+      const response = await fetch(`${BACKEND_API_URL}/api/generate-new-faq`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -153,13 +150,17 @@ const ModFaq = ({ onClose, open, termId }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setNewFaq(data.newFaq || []);
+      setNewFaq(data.newFaq ? [data.newFaq] : []);
       setGeneratingNewFaq(false);
       setShowNewFaqModal(true);
     } catch (error) {
       console.error('Error generating new FAQ:', error);
       setGeneratingNewFaq(false);
     }
+  };
+
+  const handleDone = () => {
+    window.location.reload();
   };
 
   if (loading) {
@@ -212,16 +213,14 @@ const ModFaq = ({ onClose, open, termId }) => {
                     Generate New FAQ
                   </Button>
                   <Button 
-  variant="contained" 
-  onClick={() => {
-    setShowCustomInput(true);
-    setCustomFaqIndex(index);
-  }}
->
-  Custom Question
-</Button>
-
-
+                    variant="contained" 
+                    onClick={() => {
+                      setShowCustomInput(true);
+                      setCustomFaqIndex(index);
+                    }}
+                  >
+                    Custom Question
+                  </Button>
                 </Box>
               </Box>
             ))}
@@ -253,7 +252,7 @@ const ModFaq = ({ onClose, open, termId }) => {
           <Button 
             variant="contained" 
             color="secondary" 
-            onClick={onClose}
+            onClick={handleDone}
           >
             Done
           </Button>
@@ -278,7 +277,7 @@ const ModFaq = ({ onClose, open, termId }) => {
                 </Box>
               )}
               <Typography variant="h6" className="faq-question">New FAQ:</Typography>
-              {newFaq && newFaq.length > 0 && (
+              {Array.isArray(newFaq) && newFaq.length > 0 && (
                 <Box className="faq-item-faq">
                   <Typography variant="body1" className="faq-answer">
                     {newFaq.map((faq, index) => {

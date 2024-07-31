@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL;
+
 function AddOrUpdateLegislation({ isUpdate, existingData }) {
   const navigate = useNavigate();
   const [legislation, setLegislation] = useState(existingData || {
@@ -19,8 +21,8 @@ function AddOrUpdateLegislation({ isUpdate, existingData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = isUpdate 
-      ? `http://127.0.0.1:5000/api/legislation/${legislation.congress_id}/${legislation.legislative_id}` 
-      : 'http://127.0.0.1:5000/api/legislation/bills';
+      ? `${BACKEND_API_URL}/api/legislation/${legislation.congress_id}/${legislation.legislative_id}` 
+      : `${BACKEND_API_URL}/api/legislation/bills`;
     const method = isUpdate ? 'PUT' : 'POST';
 
     try {
@@ -35,7 +37,8 @@ function AddOrUpdateLegislation({ isUpdate, existingData }) {
         alert(`${isUpdate ? 'Updated' : 'Added'} legislation successfully!`);
         navigate('/');
       } else {
-        alert(`Failed to ${isUpdate ? 'update' : 'add'} legislation`);
+        const errorData = await response.json();
+        alert(`Failed to ${isUpdate ? 'update' : 'add'} legislation: ${errorData.error}`);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -49,23 +52,23 @@ function AddOrUpdateLegislation({ isUpdate, existingData }) {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Legislative ID:</label>
-          <input type="text" name="legislative_id" value={legislation.legislative_id} onChange={handleChange} />
+          <input type="text" name="legislative_id" value={legislation.legislative_id} onChange={handleChange} required />
         </div>
         <div>
           <label>Summary:</label>
-          <textarea name="summary" value={legislation.summary} onChange={handleChange}></textarea>
+          <textarea name="summary" value={legislation.summary} onChange={handleChange} required></textarea>
         </div>
         <div>
-          <label>Bill Name:</label>
+          <label>Bill Name (optional):</label>
           <input type="text" name="bill_name" value={legislation.bill_name} onChange={handleChange} />
         </div>
         <div>
           <label>Congress ID:</label>
-          <input type="number" name="congress_id" value={legislation.congress_id} onChange={handleChange} />
+          <input type="number" name="congress_id" value={legislation.congress_id} onChange={handleChange} required />
         </div>
         <div>
           <label>Text:</label>
-          <textarea name="text" value={legislation.text} onChange={handleChange}></textarea>
+          <textarea name="text" value={legislation.text} onChange={handleChange} required></textarea>
         </div>
         <div>
           <label>Link:</label>
