@@ -53,6 +53,8 @@ https://stackoverflow.com/questions/59026168/how-to-access-localhost-from-anothe
 
 https://stackoverflow.com/questions/59026168/how-to-access-localhost-from-another-computer-on-same-network#:~:text=To%20access%20a%20Flask%20app%20from%20another%20machine%2C,running%20the%20app%20the%20flask%20run%2C%20add%20--host%3D0.0.0.0
 
+https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/rules
+
 ## Editing
 utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
 
