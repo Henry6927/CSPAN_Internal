@@ -55,6 +55,8 @@ https://learn.microsoft.com/en-us/windows/security/operating-system-security/net
 
 ## Editing
 
+everytime you edit the react frontend side you must do npm run build to basically "save" the changes, UNLESS you are running it using the npm run start method mentioned below.
+
 The following is not required but recommeneded when editing. 
 
 utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
