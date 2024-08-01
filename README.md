@@ -35,10 +35,15 @@ REACT_APP_GOOGLE_CSE_CX=xxxxx
 * note that the google CSE, CX keys are not required, they are an aesthetic choice.
 
 
-## localsetup setup
-python run.py
+## Local Setup
+```
+.\venv\Scripts\activate
 
-## setup across network 
+python run.py
+```
+
+it then should be accessible on localhost:5000, and the backend accessible on localhost:5000/api/{endpoint} 
+## Setup Across Network 
 will require a network rule which allows it to listen on network IPs, 10.10.8.0/23.
 netsh advfirewall firewall add rule name="Allow Flask on port 5000" protocol=TCP dir=in localport=5000 action=allow remoteip=10.10.8.0/23
 will also require some modifications to run.py,__init__,app but otherwise just run on Terminal and connect 
