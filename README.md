@@ -13,7 +13,6 @@ cd CSPAN_Internal
 
 npm install
 
-.\venv\Scripts\activate
 ```
 
 create .env file in CSPAN_Internal file containing the following:
