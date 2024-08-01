@@ -53,3 +53,16 @@ will also require some modifications to run.py,__init__,app but otherwise just r
 utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
 
 `npm run build` anytime you make an edit.
+
+Note app/routes/regeneration_routes and term_routes both have chatgpt version, which can be changed for cost saving /improved summaries. 
+
+Model	Token limits	Request and other limits	Batch queue limits
+gpt-4o -- 30,000 TPM, 500 RPM, 90,000 TPD
+gpt-4o-mini -- 200,000 TPM, 500 RPM, 10,000 RPD, 2,000,000 TPD
+gpt-3.5-turbo	-- 200,000 TPM, 500 RPM, 10,000 RPD, 2,000,000 TPD
+gpt-4	-- 10,000 TPM, 500 RPM, 10,000 RPD, 100,000 TPD
+gpt-4-turbo -- 30,000 TPM, 500 RPM, 90,000 TPD
+text-embedding-3-small	-- 1,000,000 TPM, 3,000 RPM, 3,000,000 TPD
+dall-e-3 -- 5 images per minute, tts-1, 50 RPM
+whisper-1	-- 50 RPM
+
