@@ -1,0 +1,165 @@
+.container {
+    max-width: 60%;
+    margin: 5% auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .title {
+    font-size: 2em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .form-group label {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .file-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .file-input-container input[type="file"] {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .file-input-label {
+    display: block;
+    margin: 10px 0;
+    text-align: center;
+  }
+  
+  ul {
+    padding-left: 20px;
+  }
+  
+  ul li {
+    margin-bottom: 5px;
+  }
+  
+  .instructions {
+    padding-left: 20px;
+    list-style-type: none;
+  }
+  
+  .instructions li {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .instructions li strong {
+    color: #333;
+  }
+  
+  .logs {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  hr {
+    margin: 20px 0;
+  }
+  
+  h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .logs li {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .logs li:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .logs li:last-child {
+    border-bottom: none;
+  }
+  
+  .logs li.success {
+    color: white;
+    background-color: green;
+  }
+  
+  .logs li.success:hover {
+    background-color: darkgreen;
+  }
+  
+  .logs li.error {
+    color: white;
+    background-color: red;
+  }
+  
+  .logs li.error:hover {
+    background-color: darkred;
+  }
+  
+  .submit-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #2c3e50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .submit-button:hover:not(:disabled) {
+    background-color: #1a242f;
+  }
+  

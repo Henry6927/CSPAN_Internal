@@ -68,6 +68,25 @@ function LegislationList() {
     navigate(`/legislation/${congress_id}/${legislative_id}`);
   };
 
+  const handleClearAll = async () => {
+    if (window.confirm('Are you sure you want to clear all legislation?')) {
+      try {
+        const response = await fetch(`${BACKEND_API_URL}/api/legislation/bills/clear`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          setLegislation([]);
+        } else {
+          const errorData = await response.json();
+          alert(`Failed to clear legislation: ${errorData.error}`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error clearing legislation.');
+      }
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -126,6 +145,7 @@ function LegislationList() {
           <h3 className="legislation-title">{item.bill_name || 'Unnamed Bill'}</h3>
         </div>
       ))}
+      <button className="clear-button" onClick={handleClearAll}>Clear All Legislation</button>
     </div>
   );
 }

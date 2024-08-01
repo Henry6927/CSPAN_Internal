@@ -17,47 +17,47 @@ function LegislationDetail() {
   const [generatedDescription, setGeneratedDescription] = useState('');
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/legislation/${congressId}/${legislativeId}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+    const fetchData = async () => {
+      try {
+        console.log(`Fetching data for congressId: ${congressId}, legislativeId: ${legislativeId}`);
+        const response = await fetch(`${API_BASE_URL}/legislation/${congressId}/${legislativeId}`);
+        console.log('Response:', response);
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const contentType = response.headers.get('content-type');
+        console.log('Content-Type:', contentType);
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Received non-JSON response');
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Fetched data:', data);
+
+        const data = await response.json();
+        console.log('Fetched bill data:', data);
         setBill(data);
         setLoading(false);
 
-        if (legislation.length === 0) {
-          fetch(`${API_BASE_URL}/legislation`)
-            .then(response => response.json())
-            .then(allData => {
-              setLegislation(allData);
-            })
-            .catch(error => {
-              console.error('Error fetching all legislation:', error);
-            });
-        }
-
         if (data.bill_name) {
-          fetch(`https://www.googleapis.com/customsearch/v1?q=${data.bill_name}&cx=${process.env.REACT_APP_GOOGLE_CSE_CX}&key=${process.env.REACT_APP_GOOGLE_CSE_API_KEY}&searchType=image&num=1`)
-            .then(response => response.json())
-            .then(imageData => {
-              if (imageData.items && imageData.items.length > 0) {
-                setImageUrl(imageData.items[0].link);
-              }
-            })
-            .catch(error => {
-              console.error('Error fetching image:', error);
-            });
+          const imageResponse = await fetch(`https://www.googleapis.com/customsearch/v1?q=${data.bill_name}&cx=${process.env.REACT_APP_GOOGLE_CSE_CX}&key=${process.env.REACT_APP_GOOGLE_CSE_API_KEY}&searchType=image&num=1`);
+          console.log('Image Response:', imageResponse);
+          const imageContentType = imageResponse.headers.get('content-type');
+          console.log('Image Content-Type:', imageContentType);
+          if (!imageContentType || !imageContentType.includes('application/json')) {
+            throw new Error('Received non-JSON response');
+          }
+          const imageData = await imageResponse.json();
+          console.log('Fetched image data:', imageData);
+          if (imageData.items && imageData.items.length > 0) {
+            setImageUrl(imageData.items[0].link);
+          }
         }
-      })
-      .catch(error => {
+      } catch (error) {
+        console.error('Error fetching data:', error);
         setError(error);
         setLoading(false);
-      });
-  }, [congressId, legislativeId, legislation.length]);
+      }
+    };
+    fetchData();
+  }, [congressId, legislativeId]);
 
   const handlePrev = () => {
     const currentIndex = legislation.findIndex(b => b.legislative_id.toString() === legislativeId && b.congress_id.toString() === congressId);
@@ -96,7 +96,15 @@ function LegislationDetail() {
         },
         body: JSON.stringify({ bill_name: bill.bill_name, summary: bill.summary })
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Generate Description Response:', response);
+        const contentType = response.headers.get('content-type');
+        console.log('Generate Description Content-Type:', contentType);
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Received non-JSON response');
+        }
+        return response.json();
+      })
       .then(data => {
         if (data.description) {
           setGeneratedDescription(data.description);
@@ -125,32 +133,25 @@ function LegislationDetail() {
   return (
     <div className="container">
       <div className="navigation-buttons">
-        <button onClick={handlePrev} disabled={legislation.findIndex(b => b.legislative_id.toString() === legislativeId && b.congress_id.toString() === congressId) === 0}>Previous</button>
-        <button onClick={handleNext} disabled={legislation.findIndex(b => b.legislative_id.toString() === legislativeId && b.congress_id.toString() === congressId) === legislation.length - 1}>Next</button>
       </div>
-      <h1 className="bill-title">{bill.bill_name || "No title available"}</h1>
-      <img src={imageUrl} alt="Legislation related" className="legislation-image" />
+      <h1 className="term-title bill-title">{bill.bill_name || "No title available"}</h1>
       <div className="content-section">
         <div className="summary-section">
-          <p><a href={bill.link}>{bill.link}</a></p>
+          <p><a href={bill.link} target="_blank" rel="noopener noreferrer">{bill.link}</a></p>
         </div>
         <div className="summary-section">
           <h3>Summary</h3>
           <p>{bill.summary}</p>
         </div>
       </div>
-      <div className="content-section">
-        <div className="details-section">
-          <p><strong>Congress ID:</strong> {bill.congress_id}</p>
-          <p><strong>Legislative ID:</strong> {bill.legislative_id}</p>
-          <p><strong>Character Count:</strong> {bill.charcount}</p>
-        </div>
+      <div className="content-section details-section">
+        <p><strong>Congress ID:</strong> {bill.congress_id}</p>
+        <p><strong>Legislative ID:</strong> {bill.legislative_id}</p>
+        <p><strong>Character Count:</strong> {bill.charcount}</p>
       </div>
-      <div className="content-section">
-        <div className="raw-text-section">
-          <h3>Raw Text</h3>
-          <p>{bill.text}</p>
-        </div>
+      <div className="content-section raw-text-section">
+        <h3>Raw Text (0:3000 char.)</h3>
+        <p>{bill.text}</p>
       </div>
       {generatedDescription && (
         <div className="generated-description">
@@ -158,12 +159,7 @@ function LegislationDetail() {
           <p>{generatedDescription}</p>
         </div>
       )}
-      <div className="generate-description-button">
-        <button onClick={generateDescription}>Generate Legislation Description</button>
-      </div>
       <div className="navigation-buttons">
-        <button onClick={handlePrev} disabled={legislation.findIndex(b => b.legislative_id.toString() === legislativeId && b.congress_id.toString() === congressId) === 0}>Previous</button>
-        <button onClick={handleNext} disabled={legislation.findIndex(b => b.legislative_id.toString() === legislativeId && b.congress_id.toString() === congressId) === legislation.length - 1}>Next</button>
       </div>
     </div>
   );

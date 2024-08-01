@@ -2,7 +2,6 @@ from app import create_app
 import os
 
 if __name__ == '__main__':
-    # Set environment variables for development
     os.environ['FLASK_ENV'] = 'development'
     os.environ['FLASK_DEBUG'] = '1'
 

@@ -1,20 +1,19 @@
 import logging
-from flask import Blueprint, jsonify, request, abort, make_response
+from flask import Blueprint, jsonify, request, make_response
 from app.models import LegislativeBill, db
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import openai
+import requests
+from bs4 import BeautifulSoup
 
-# Set up logging
 logger = logging.getLogger(__name__)
-
-# Create a Blueprint for legislation routes
 bp = Blueprint('legislation', __name__)
 
 def create_error_response(message, status_code):
-    """Helper function to create a JSON response with an error message."""
     response = make_response(jsonify({'error': message}), status_code)
+    response.headers['Content-Type'] = 'application/json'
     return response
 
 @bp.route('/<int:congress_id>/<int:legislative_id>', methods=['GET'])
@@ -29,7 +28,7 @@ def get_legislative_bill(congress_id, legislative_id):
         logger.error(f"Error fetching legislative bill: {e}")
         return create_error_response("Internal server error while fetching legislative bill", 500)
 
-    return jsonify({
+    response = jsonify({
         'id': bill.id,
         'legislative_id': bill.legislative_id,
         'summary': bill.summary,
@@ -39,6 +38,8 @@ def get_legislative_bill(congress_id, legislative_id):
         'link': bill.link,
         'charcount': bill.charcount
     })
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 @bp.route('/<int:congress_id>/<int:legislative_id>', methods=['PUT'])
 def update_legislative_bill(congress_id, legislative_id):
@@ -77,7 +78,7 @@ def update_legislative_bill(congress_id, legislative_id):
         db.session.rollback()
         return create_error_response("Internal server error while updating legislative bill", 500)
 
-    return jsonify({
+    response = jsonify({
         'id': bill.id,
         'legislative_id': bill.legislative_id,
         'summary': bill.summary,
@@ -87,6 +88,8 @@ def update_legislative_bill(congress_id, legislative_id):
         'link': bill.link,
         'charcount': bill.charcount
     })
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 @bp.route('/bills', methods=['POST'])
 def create_legislative_bill():
@@ -161,7 +164,7 @@ def create_legislative_bill():
         db.session.rollback()
         return create_error_response(f"Internal server error while creating new legislative bill: {str(e)}", 500)
 
-    return jsonify({
+    response = jsonify({
         'id': new_bill.id,
         'legislative_id': new_bill.legislative_id,
         'summary': new_bill.summary,
@@ -170,7 +173,9 @@ def create_legislative_bill():
         'text': new_bill.text,
         'link': new_bill.link,
         'charcount': new_bill.charcount
-    }), 201
+    })
+    response.headers['Content-Type'] = 'application/json'
+    return response, 201
 
 @bp.route('/bills', methods=['GET'])
 def get_all_legislative_bills():
@@ -204,89 +209,126 @@ def get_all_legislative_bills():
         ]
         
         logger.debug(f"Successfully fetched {len(response)} bills")
-        return jsonify(response)
+        response_json = jsonify(response)
+        response_json.headers['Content-Type'] = 'application/json'
+        return response_json
     
     except Exception as e:
         logger.error(f"Error fetching legislative bills: {e}")
         return create_error_response("Internal server error while fetching legislative bills", 500)
 
-openai.api_key = os.getenv('REACT_APP_API_KEY')
+@bp.route('/bills/clear', methods=['DELETE'])
+def clear_all_legislation():
+    logger.debug("Clearing all legislative bills")
 
-@bp.route('/generate-legislation-description', methods=['POST'])
-def generate_legislation_description():
-    data = request.json
-    bill_name = data.get('bill_name')
-    summary = data.get('summary')
+    try:
+        num_deleted = db.session.query(LegislativeBill).delete()
+        db.session.commit()
+        logger.debug(f"Successfully deleted {num_deleted} bills")
+        return jsonify({'message': f'Successfully deleted {num_deleted} bills'}), 200
+    except Exception as e:
+        logger.error(f"Error clearing legislative bills: {e}")
+        db.session.rollback()
+        return create_error_response("Internal server error while clearing legislative bills", 500)
 
-    if not bill_name or not summary:
-        return jsonify({'error': 'Bill name and summary are required'}), 400
 
-    prompt = (
-        f"Generate a detailed yet concise description of a legislative bill named '{bill_name}'. "
-        f"The bill summary is: {summary}. "
-        "Provide an objective and informative description suitable for a public website. "
-        "Avoid using any political bias and keep the description within 150 words."
+@bp.route('/generate-and-save-legislation/<int:congress_id>/<int:legislative_id>', methods=['POST'])
+def generate_and_save_legislation(congress_id, legislative_id):
+    logger.debug(f"Generating and saving legislation for congress_id={congress_id}, legislative_id={legislative_id}")
+
+    url = f"https://www.congress.gov/{congress_id}/bills/hr{legislative_id}/BILLS-{congress_id}hr{legislative_id}ih.xml"
+    logger.debug(f"Fetching data from URL: {url}")
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        response_text = response.text
+        if 'application/xml' in response.headers['Content-Type'] or 'text/xml' in response.headers['Content-Type']:
+            soup = BeautifulSoup(response_text, 'lxml')  # Use 'xml' parser
+            text = soup.get_text()
+        else:
+            text = response_text
+        text = text[:4000] if len(text) > 4000 else text
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+        return create_error_response(f"Error fetching data from URL: {http_err}", http_err.response.status_code)
+    except Exception as e:
+        logger.error(f"Error fetching data from URL: {e}")
+        return create_error_response("Error fetching data from URL", 500)
+
+    prompt_summary = (
+        f"Summarize the following legislative bill text: {text}. Provide an objective and informative description suitable for a public website. Avoid using any political bias and keep the description within 200 words."
     )
 
     try:
-        response = openai.ChatCompletion.create(
+        summary_response = openai.ChatCompletion.create(
             model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt_summary}
             ],
-            max_tokens=300,
+            max_tokens=1500,
             temperature=0.7
         )
 
-        description = response['choices'][0]['message']['content'].strip()
-        return jsonify({'description': description})
+        summary = summary_response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Error generating summary: {e}")
+        return create_error_response(f"Error generating summary: {str(e)}", 500)
 
-@bp.route('/generate-legislation-title/<int:congress_id>/<int:legislative_id>', methods=['POST'])
-def generate_legislation_title(congress_id, legislative_id):
-    logger.debug(f"Generating title for legislative bill with congress_id={congress_id}, legislative_id={legislative_id}")
-    try:
-        bill = LegislativeBill.query.filter_by(congress_id=congress_id, legislative_id=legislative_id).first()
-        if not bill:
-            logger.error(f"Legislative bill not found: congress_id={congress_id}, legislative_id={legislative_id}")
-            return create_error_response("Legislative bill not found", 404)
-    except Exception as e:
-        logger.error(f"Error fetching legislative bill: {e}")
-        return create_error_response("Internal server error while fetching legislative bill", 500)
-
-    text_excerpt = bill.text[:1000] if bill.text else ""
-    
-    if not text_excerpt:
-        logger.error("The legislative bill has no text to generate a title from")
-        return create_error_response("The legislative bill has no text to generate a title from", 400)
-
-    prompt = (
+    text_excerpt = text[:3000]
+    prompt_title = (
         f"Generate a concise and descriptive title for a legislative bill. The bill text excerpt is: \"{text_excerpt}\". "
         "Provide a title that clearly and succinctly represents the main idea of the bill."
     )
 
     try:
-        response = openai.ChatCompletion.create(
+        title_response = openai.ChatCompletion.create(
             model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt_title}
             ],
-            max_tokens=50,
+            max_tokens=150,
             temperature=0.7
         )
 
-        title = response['choices'][0]['message']['content'].strip()
-        return jsonify({'title': title})
+        bill_name = title_response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        logger.error(f"Error generating title: {e}")
-        return create_error_response(f"Error generating title: {str(e)}", 500)
+        logger.error(f"Error generating bill name: {e}")
+        return create_error_response(f"Error generating bill name: {str(e)}", 500)
 
-# Ensure CORS is enabled if necessary
+    new_bill = LegislativeBill(
+        legislative_id=legislative_id,
+        summary=summary,
+        bill_name=bill_name,
+        congress_id=congress_id,
+        text=text,
+        link=url,
+        charcount=len(text)
+    )
+    
+    try:
+        db.session.add(new_bill)
+        db.session.commit()
+        logger.debug(f"New legislative bill added to database with id: {new_bill.id}")
+    except Exception as e:
+        logger.error(f"Database error while adding new legislative bill: {e}")
+        db.session.rollback()
+        return create_error_response(f"Internal server error while creating new legislative bill: {str(e)}", 500)
+
+    response = jsonify({
+        'id': new_bill.id,
+        'legislative_id': new_bill.legislative_id,
+        'summary': new_bill.summary,
+        'bill_name': new_bill.bill_name,
+        'congress_id': new_bill.congress_id,
+        'text': new_bill.text,
+        'link': new_bill.link,
+        'charcount': new_bill.charcount
+    })
+    response.headers['Content-Type'] = 'application/json'
+    return response, 201
 CORS(bp)
-
-# Load environment variables from a .env file
 load_dotenv()
 openai.api_key = os.getenv('REACT_APP_API_KEY')
