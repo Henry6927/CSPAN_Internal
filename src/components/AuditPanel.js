@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './AuditPanel.css';
 import { FaChevronDown, FaChevronUp, FaClipboard, FaRobot, FaFileCsv, FaHandPaper, FaCog } from 'react-icons/fa';
 import AuditMenu from './AuditMenu';
-import EditMenu from './EditMenu'; // DON'T DELETE, ITS FOR CSS
+import EditMenu from './EditMenu'; // DON'T DELETE AGAIN
 import ManualEditMenu from './ManualEditMenu';
 import CsvDownloadMenu from './CsvDownloadMenu';
 import SettingsMenu from './SettingsMenu';

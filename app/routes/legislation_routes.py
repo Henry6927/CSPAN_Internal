@@ -65,7 +65,7 @@ def update_legislative_bill(congress_id, legislative_id):
         bill.congress_id = int(data.get('congress_id', bill.congress_id))
         bill.text = data.get('text', bill.text)
         bill.link = data.get('link', bill.link)
-        bill.charcount = len(bill.text)  # Update charcount based on the length of the text
+        bill.charcount = len(bill.text)  
     except (ValueError, TypeError) as e:
         logger.error(f"Data type error during update: {e}")
         return create_error_response("Invalid data types in input data", 400)
@@ -113,15 +113,13 @@ def create_legislative_bill():
     bill_name = data.get('bill_name', '')
     text = data.get('text', '')
     link = data.get('link', '')
-    charcount = len(text)  # Calculate charcount from the length of the text
+    charcount = len(text)  
 
-    # Check if the legislative_id already exists to prevent duplication
     existing_bill = LegislativeBill.query.filter_by(legislative_id=legislative_id).first()
     if existing_bill:
         logger.error(f"Legislative bill with legislative_id {legislative_id} already exists")
         return create_error_response(f"Legislative bill with legislative_id {legislative_id} already exists", 400)
 
-    # Generate bill name if not provided
     if not bill_name:
         text_excerpt = text[:1000]
         prompt = (
@@ -203,7 +201,7 @@ def get_all_legislative_bills():
                 'bill_name': bill.bill_name,
                 'congress_id': bill.congress_id,
                 'legislative_id': bill.legislative_id,
-                'charcount': bill.charcount  # Include charcount in the response
+                'charcount': bill.charcount 
             }
             for bill in bills
         ]
@@ -244,7 +242,7 @@ def generate_and_save_legislation(congress_id, legislative_id):
         response.raise_for_status()
         response_text = response.text
         if 'application/xml' in response.headers['Content-Type'] or 'text/xml' in response.headers['Content-Type']:
-            soup = BeautifulSoup(response_text, 'lxml')  # Use 'xml' parser
+            soup = BeautifulSoup(response_text, 'lxml') 
             text = soup.get_text()
         else:
             text = response_text

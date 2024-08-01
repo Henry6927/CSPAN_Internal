@@ -543,21 +543,16 @@ def create_term():
     priority = data.get('priority')
     custom_prompt = data.get('custom_prompt', '')
 
-    # Check for required fields
     if not name or not term_type or not priority:
         return jsonify({"message": "Name, type, and priority are required"}), 400
 
-    # Check if term already exists
     existing_term = Term.query.filter_by(name=name).first()
     if existing_term:
         return jsonify({"message": "A term with this name already exists"}), 409
 
     try:
-        # Generate prompts
         summary_prompt = custom_prompt if custom_prompt else generate_prompt(name, term_type, additional_keywords)
         faq_prompt = generate_faq_prompt(name)
-
-        # Get responses from OpenAI
         prompts = [summary_prompt, faq_prompt]
         responses = get_openai_response(prompts)
 
@@ -565,14 +560,11 @@ def create_term():
         faq_response = responses[1]
         faq_items = parse_faq_content(faq_response)
 
-        # Generate new ID
         last_term = Term.query.order_by(Term.id.desc()).first()
         new_id = last_term.id + 1 if last_term else 1
 
-        # Logging for debugging
         logging.info(f"FAQ items: {faq_items}")
 
-        # Create new term
         new_term = Term(
             id=new_id,
             name=name,
@@ -591,23 +583,20 @@ def create_term():
             faqA5=faq_items[10] if len(faq_items) > 10 else ''
         )
 
-        # Add new term to the session
         db.session.add(new_term)
-        db.session.commit()  # Commit to save the new term
+        db.session.commit() 
 
-        # Retrieve the newly created term to use its ID
         created_term = Term.query.get(new_term.id)
         logging.info(f"Created Term from DB: {created_term}")
 
-        # Add keyword for the new term
         new_keyword = Keyword(keyword=created_term.name, priority=priority, term_id=created_term.id)
         db.session.add(new_keyword)
-        db.session.commit()  # Commit to save the new keyword
+        db.session.commit()  
 
         return jsonify({"id": new_term.id, "message": "Term and keyword created successfully"}), 201
 
     except Exception as e:
-        db.session.rollback()  # Rollback the session in case of error
+        db.session.rollback()  
         logging.error(f"Error creating new term: {e}")
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
 
@@ -719,7 +708,6 @@ def fetch_from_airtable_and_update():
                 logging.info(f"Created new term with ID: {term_id}")
             except IntegrityError:
                 db.session.rollback()
-                # Update the existing term
                 term = Term.query.filter_by(name=term_name).first()
                 if term:
                     for key, value in term_data.items():
@@ -742,7 +730,6 @@ def fetch_from_airtable_and_update():
                 logging.info(f"Created new audit data for term with ID: {term_id}")
             except IntegrityError:
                 db.session.rollback()
-                # Update the existing audit data
                 audit = Audit.query.get(term_id)
                 if audit:
                     for key, value in audit_data.items():

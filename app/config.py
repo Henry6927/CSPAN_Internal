@@ -7,7 +7,6 @@ class Config:
     CORS_HEADERS = 'Content-Type'
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
-    # Add other common configurations here
 
 
 class DevelopmentConfig(Config):
@@ -33,6 +32,3 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://user@localhost/prod_db')
     FRONTEND_URL = os.getenv('REACT_APP_FRONTEND_URL', 'https://your-production-frontend.com')
     BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://your-production-backend.com')
-
-
-# Add additional configuration classes as needed

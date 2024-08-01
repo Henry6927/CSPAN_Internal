@@ -10,13 +10,11 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app():
-    # Set up logging
     logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     
     app = Flask(__name__, static_folder='../build')
     
-    # Use environment variables for CORS origins
     frontend_url = os.getenv('REACT_APP_FRONTEND_URL', '')
     backend_url = os.getenv('REACT_APP_BACKEND_URL', '')
     
@@ -27,7 +25,7 @@ def create_app():
     migrate.init_app(app, db)
 
     with app.app_context():
-        from . import models  # Import models after db initialization
+        from . import models  
         from .routes import term_routes, audit_routes, regenerate_routes, legislation_routes
         app.register_blueprint(term_routes.bp, url_prefix='/api/terms')
         app.register_blueprint(audit_routes.bp, url_prefix='/api/audit')

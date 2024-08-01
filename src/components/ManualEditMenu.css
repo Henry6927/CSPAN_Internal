@@ -5,18 +5,18 @@
   transform: translate(-50%, -50%);
   width: 80%;
   max-width: 800px;
-  background-color: #f9f9f9; /* light gray background for contrast */
+  background-color: #f9f9f9; 
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
   max-height: 90vh;
-  overflow-y: auto; /* Make the content scrollable */
+  overflow-y: auto; 
 }
 
 .manual-edit-menu h2 {
   margin-bottom: 15px;
-  font-size: 2em; /* Increase the font size */
-  color: #333; /* dark gray text */
+  font-size: 2em;
+  color: #333;
 }
 
 .manual-edit-menu .manual-edit-form {
@@ -25,49 +25,49 @@
 }
 
 .manual-edit-menu .MuiTextField-root {
-  width: 100%; /* Make text fields take up the full width */
+  width: 100%;
 }
 
 .manual-edit-menu .save-button,
 .manual-edit-menu .cancel-button {
-  width: 48%; /* Take up 48% of the width */
+  width: 48%; 
   flex: 1;
 }
 
 .manual-edit-menu .button-container {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Align items vertically in the center */
-  flex-wrap: wrap; /* Allow wrapping if there are too many buttons */
-  gap: 10px; /* Add some space between buttons */
-  margin-top: 20px; /* Add margin to the top of the button container */
+  align-items: center;
+  flex-wrap: wrap; 
+  gap: 10px; 
+  margin-top: 20px; 
 }
 
 .manual-edit-menu .save-button,
 .manual-edit-menu .cancel-button {
-  background-color: #2c3e50; /* dark blue-gray background */
-  color: #fff; /* white text color */
-  padding: 10px 0; /* Add padding for better button size */
+  background-color: #2c3e50; 
+  color: #fff; 
+  padding: 10px 0;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  flex: 1; /* Ensure buttons take equal space */
-  margin: 0 5px; /* Add margin between buttons */
+  flex: 1;
+  margin: 0 5px;
 }
 
 .manual-edit-menu .save-button:hover,
 .manual-edit-menu .cancel-button:hover {
-  background-color: #1a242f; /* darker blue-gray background on hover */
+  background-color: #1a242f; 
 }
 
 .manual-edit-menu .MuiTypography-root {
-  color: #333; /* dark gray text */
+  color: #333; 
 }
 
 .manual-edit-menu .MuiInputBase-root {
-  background-color: #fff; /* white background for text fields */
+  background-color: #fff; 
 }
 
 .manual-edit-menu .MuiFormLabel-root {
-  color: #666; /* gray label text */
+  color: #666; 
 }

@@ -5,20 +5,15 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Initialize Blueprint and CORS
 bp = Blueprint('regenerate', __name__)
 CORS(bp)
 
-# Set OpenAI API key
 openai.api_key = os.getenv('REACT_APP_API_KEY')
 
-# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Verify if the OpenAI API key is loaded
 if openai.api_key:
     logging.debug("OpenAI API key loaded successfully.")
 else:
@@ -41,7 +36,7 @@ def regenerate_text():
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=1000,  # Adjust max_tokens if needed
+            max_tokens=1000, 
             temperature=0.7
         )
 
@@ -76,7 +71,7 @@ def generate_new_faq():
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=1000,  # Adjust max_tokens if needed
+            max_tokens=1000, 
             temperature=0.7
         )
 

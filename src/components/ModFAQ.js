@@ -66,7 +66,7 @@ const ModFaq = ({ onClose, open, termId }) => {
       await fetchFaqData(termId);
       setLoading(false);
       setShowNewFaqModal(false);
-      reloadFaqData(); // Ensure this is correctly called
+      reloadFaqData(); 
     } catch (error) {
       console.error('Error saving FAQ data:', error);
       setLoading(false);

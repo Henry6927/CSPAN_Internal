@@ -1,26 +1,26 @@
 .csv-download-menu {
     padding: 20px;
-    background-color: #f9f9f9; /* light gray background for contrast */
+    background-color: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-top: 10px;
-    text-align: center; /* center the content */
+    text-align: center;
   }
   
   .csv-download-menu h2 {
     margin-bottom: 15px;
     font-size: 1.5em;
-    color: #333; /* dark gray text */
+    color: #333;
   }
   
   .greyButton {
-    display: inline-block; /* ensure buttons are inline-block */
-    width: 200px; /* set a fixed width */
-    margin: 10px 5px; /* add margin for spacing */
+    display: inline-block; 
+    width: 200px; 
+    margin: 10px 5px; 
     padding: 10px 15px;
     font-size: 1em;
-    color: #fff; /* white text */
-    background-color: #2c3e50; /* dark blue-gray background */
+    color: #fff; 
+    background-color: #2c3e50;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -28,17 +28,17 @@
   }
   
   .csv-download-menu button:hover {
-    background-color: #1a242f; /* darker blue-gray background on hover */
+    background-color: #1a242f;
   }
   
   .redButton {
     background-color: darkred;
-    display: inline-block; /* ensure buttons are inline-block */
-    width: 200px; /* set a fixed width */
-    margin: 10px 5px; /* add margin for spacing */
+    display: inline-block; 
+    width: 200px; 
+    margin: 10px 5px; 
     padding: 10px 15px;
     font-size: 1em;
-    color: #fff; /* white text */
+    color: #fff; 
     
     border: none;
     border-radius: 5px;

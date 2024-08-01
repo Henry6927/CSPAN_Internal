@@ -7,7 +7,6 @@ bp = Blueprint('audits', __name__)
 def update_audit(id):
     audit = Audit.query.get(id)
     if not audit:
-        # If the audit does not exist, create it with the provided data
         return create_audit_with_id(id)
     data = request.json
     audit.FAQ = data['auditData'].get('FAQ', audit.FAQ)
