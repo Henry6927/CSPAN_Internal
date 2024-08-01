@@ -4,7 +4,7 @@ Request install for:
 * NodeJS v20.15
 * Python 3.12
 
-Once installed, you must run the following in Powershell, once you enter the folder you would like this app to appear in (cd into said folder):
+Once installed, you must run the following in Powershell:
 
 ```
 git clone https://github.com/Henry6927/CSPAN_Internal.git
