@@ -1,7 +1,19 @@
-python run.py
+Pre-reqs:
+Request install for:
+* NodeJS v20.15
+* Python 3.12
+Once installed, you must run the following in Powershell, once you enter the folder you would like this app to appear in (cd into said folder):
+
+`git clone https://github.com/Henry6927/CSPAN_Internal.git`
+
+`cd CSPAN_Internal`
+
+`npm install`
+
+`.\venv\Scripts\activate`
 
 
-create .env file containing the following:
+create .env file in CSPAN_Internal file containing the following:
 
 REACT_APP_AIRTABLE_BASE_ID=xxxxx
 
@@ -14,9 +26,16 @@ REACT_APP_API_KEY=xxxxxx
 REACT_APP_GOOGLE_CSE_API_KEY=xxxxx
 
 REACT_APP_GOOGLE_CSE_CX=xxxxx
+* note that the google CSE, CX keys are not required, they are an aesthetic choice.
 
-for dev setup:
-run localhost:3000 and localhost:5000 after proper setup to see logs.
 
-for prod setup:
-run (ip):5000 after proper setup. (python run.py), backend accessible via ip:5000/api, frontend via ip:5000/
+for localsetup setup:
+python run.py
+
+for setup across network:
+will require a network rule which allows it to listen on network IPs, 10.10.8.0/23.
+netsh advfirewall firewall add rule name="Allow Flask on port 5000" protocol=TCP dir=in localport=5000 action=allow remoteip=10.10.8.0/23
+
+notes for making edits:
+npm run build anytime you make an edit,
+
