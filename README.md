@@ -1,4 +1,4 @@
-## Setup:
+## Initial Setup:
 
 Request install for:
 * NodeJS v20.15
@@ -36,6 +36,7 @@ REACT_APP_GOOGLE_CSE_CX=xxxxx
 
 
 ## Local Setup
+After you have completed the initial setup, you can proceed to starting it on your local device doing the following inside the CSPAN_Internal app on Powershell 
 ```
 .\venv\Scripts\activate
 
@@ -48,6 +49,7 @@ will require a network rule which allows it to listen on network IPs, 10.10.8.0/
 netsh advfirewall firewall add rule name="Allow Flask on port 5000" protocol=TCP dir=in localport=5000 action=allow remoteip=10.10.8.0/23
 will also require some modifications to run.py,__init__,app but otherwise just run on Terminal and connect 
 
-notes for making edits:
-npm run build anytime you make an edit,
+## Editing
+utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
 
+`npm run build` anytime you make an edit.
