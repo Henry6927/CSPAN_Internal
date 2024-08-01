@@ -28,6 +28,10 @@ REACT_APP_API_KEY=xxxxxx
 REACT_APP_GOOGLE_CSE_API_KEY=xxxxx
 
 REACT_APP_GOOGLE_CSE_CX=xxxxx
+
+REACT_APP_FRONTEND_URL=http://localhost:5000
+
+REACT_APP_BACKEND_URL=http://localhost:5000
 ```
 
 * note that the google CSE, CX keys are not required, they are an aesthetic choice.
