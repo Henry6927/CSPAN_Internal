@@ -49,6 +49,10 @@ will require a network rule which allows it to listen on network IPs, 10.10.8.0/
 netsh advfirewall firewall add rule name="Allow Flask on port 5000" protocol=TCP dir=in localport=5000 action=allow remoteip=10.10.8.0/23
 will also require some modifications to run.py,__init__,app but otherwise just run on Terminal and connect 
 
+https://stackoverflow.com/questions/59026168/how-to-access-localhost-from-another-computer-on-same-network
+
+https://stackoverflow.com/questions/59026168/how-to-access-localhost-from-another-computer-on-same-network#:~:text=To%20access%20a%20Flask%20app%20from%20another%20machine%2C,running%20the%20app%20the%20flask%20run%2C%20add%20--host%3D0.0.0.0
+
 ## Editing
 utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
 
