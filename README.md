@@ -54,6 +54,9 @@ https://stackoverflow.com/questions/59026168/how-to-access-localhost-from-anothe
 https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/rules
 
 ## Editing
+
+The following is not required but recommeneded when editing. 
+
 utilize `npm run start` for developing to run frontend, and `run.py` for backend. Note this will require modifications to code as well.
 
 `npm run build` anytime you make an edit.
